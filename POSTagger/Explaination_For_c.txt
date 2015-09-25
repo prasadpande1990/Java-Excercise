@@ -1,0 +1,16 @@
+Explaination for Exception in part C:
+
+Cause:
+	OutOfMemory exception occured in the part C because of the tremendously long string consisting of only number without any period charachter. Java heap space exception occurs when application is attempting to add such long sized string into the application heap when there is no sufficient space available for this. 
+	
+Work Around
+1) Jsoup unable to parse the string of numbers
+	Inititally when URL is passed to Jsoup parser, it returns the parsed HTML body text from the given HTML page. But for this particular URL, Jsoup unable to parse the complete string because by default the max size of string parsed is 1MB. To resolve this,maxBodySize method is used. A max size of zero is treated as an infinite amount.
+					Connection con = Jsoup.connect(url).maxBodySize(0);
+					doc = con.get();
+
+2) 	POS Tagger unable to parse a string, returning OutOfMemory exception: Java Heap Space
+	This occurs because maxEnt parser uses the tokenizer that tokenizes all the string and put that in memory. In our case since the string is too large, it is impossible to load the complete string in the memory at once. That's the reason JVM is throwing an OutOfMemory exception.
+	
+Possible Soultion
+	To handle this long string, we can divide the strings based on the whitespace or other characters (e.g ?!.,;) and then apply tagging. But in case c, there is only white space between the numbers which will call tagText method for every number out there. This is not an efficient way so did not implement for the solution. I also tried by increasing the max heap size using -Xmx parameter but that option didn't work. 
